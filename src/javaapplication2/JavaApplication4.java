@@ -21,6 +21,8 @@ public class JavaApplication4 extends Storage implements StartPoint {
     private int[] temp_numbers;
     private int[] random_numbers;
    
+  
+
    private void greaterId() {
         
         for(int i=0;i<temp_numbers.length;i++){
@@ -50,6 +52,22 @@ public class JavaApplication4 extends Storage implements StartPoint {
      
     }
     
+  
+   private void BubbleSort() {
+        
+        int[] Iteration = new int[2];
+        
+        if (PCJ.myId() % 2 == 1) {
+            Iteration[1] = PCJ.myId() + 1;
+            Iteration[0] = PCJ.myId() - 1;
+        }
+        if (PCJ.myId() % 2 == 0){
+            Iteration[1] = PCJ.myId() -1;
+            Iteration[0] = PCJ.myId() +1;
+        }
+        
+        Arrays.sort(random_numbers);
+   }
     
     public static void randomize(int[] array) {
         Random r = new Random();
