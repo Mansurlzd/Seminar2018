@@ -21,9 +21,48 @@ public class JavaApplication4 extends Storage implements StartPoint {
     private int[] temp_numbers;
     private int[] random_numbers;
    
-  
-
-   private void greaterId() {
+   
+    
+    
+ private void sort() {
+     
+        int rank=PCJ.myId();
+        
+        int odd_rank,even_rank;
+        if(rank%2==0){
+        odd_rank=rank-1;
+        even_rank=rank+1;
+        }
+        else{
+        odd_rank=rank+1;
+        even_rank=rank-1;
+        }
+        
+        Arrays.sort(random_numbers);
+        
+        
+            if (odd_rank < PCJ.threadCount() && odd_rank >= 0) {
+                PCJ.put(odd_rank, "PCJ_numbers", random_numbers);
+                PCJ.waitFor("PCJ_numbers");}
+            
+            if (even_rank < PCJ.threadCount() && even_rank >= 0) {
+                PCJ.put(even_rank, "PCJ_numbers", random_numbers);
+                PCJ.waitFor("PCJ_numbers");}   
+            
+                if (odd_rank < PCJ.myId() || even_rank<PCJ.myId()) {
+                    smallerId();
+                }
+                else {
+                    greaterId();
+                }
+                int[] s = temp_numbers;
+                temp_numbers = random_numbers;
+                random_numbers = s;
+                   
+            PCJ.barrier();
+        
+    }    
+        private void greaterId() {
         
         for(int i=0;i<temp_numbers.length;i++){
             
@@ -52,22 +91,6 @@ public class JavaApplication4 extends Storage implements StartPoint {
      
     }
     
-  
-   private void BubbleSort() {
-        
-        int[] Iteration = new int[2];
-        
-        if (PCJ.myId() % 2 == 1) {
-            Iteration[1] = PCJ.myId() + 1;
-            Iteration[0] = PCJ.myId() - 1;
-        }
-        if (PCJ.myId() % 2 == 0){
-            Iteration[1] = PCJ.myId() -1;
-            Iteration[0] = PCJ.myId() +1;
-        }
-        
-        Arrays.sort(random_numbers);
-   }
     
     public static void randomize(int[] array) {
         Random r = new Random();
@@ -84,8 +107,7 @@ public class JavaApplication4 extends Storage implements StartPoint {
         random_numbers = new int[SIZE/PCJ.threadCount()];
         temp_numbers =     new int[SIZE/PCJ.threadCount()];
       
-        
-        
+       
         for (int i = 0; i < 10; ++i) {
             randomize(random_numbers);
             PCJ.barrier();
@@ -93,7 +115,7 @@ public class JavaApplication4 extends Storage implements StartPoint {
             
             if (PCJ.myId() == 0)
                 currentTime = System.currentTimeMillis();
-            
+            sort();
             if (PCJ.myId() == 0) {
                  
 
@@ -111,5 +133,15 @@ public class JavaApplication4 extends Storage implements StartPoint {
             System.out.println("Max time is: "+" "+max+" Min time is :"+" "+min);
           
         }
+        
+        
+        
+     /*   for(int i =0;i <PCJ_numbers.length;i++){
+        System.out.println("ReceivedData:"+PCJ_numbers[i]);
+        System.out.println("Numbers:"+random_numbers[i]);
         }
-        }
+        
+     */ 
+    }
+
+}
